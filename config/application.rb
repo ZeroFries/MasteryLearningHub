@@ -25,5 +25,7 @@ module MasteryLearningHub
     end
 
     config.active_record.schema_format = :sql
+
+    config.autoload_paths << Rails.root.join('lib')
   end
 end
