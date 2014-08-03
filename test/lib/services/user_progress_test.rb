@@ -8,7 +8,7 @@ module Services
 			@node_1 = @learning_path.nodes.create title: "node1", source_ids: Source.all[0..4].map(&:id)
 			@node_2 = @learning_path.nodes.create title: "node2", source_ids: Source.all[4..7].map(&:id) 
 			@node_3 = @learning_path.nodes.create title: "node3", source_ids: Source.all[7..10].map(&:id)
-			@user = User.create
+			@user = User.create email: "email@email.com"
 			@service = UserProgress.new @user, @learning_path
 		end
 
