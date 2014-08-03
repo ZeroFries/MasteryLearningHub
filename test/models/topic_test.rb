@@ -24,4 +24,9 @@ class TopicTest < ActiveSupport::TestCase
   	end
   end
 
+  test 'can have sources' do
+  	source = @topic.sources.create url: "google.ca", title: "google", image_url: "google.png", description: "search engine"
+  	assert_equal source, @topic.reload.sources.first
+  end
+
 end

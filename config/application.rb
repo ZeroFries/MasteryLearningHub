@@ -23,5 +23,7 @@ module MasteryLearningHub
     config.generators do |g|
       g.test_framework :minitest, spec: false, fixture: false
     end
+
+    config.active_record.schema_format = :sql
   end
 end
