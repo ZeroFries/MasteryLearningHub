@@ -6,7 +6,7 @@ class SourcesController < ApplicationController
 		render json: { source: @source }
 	end
 
-	def create
-		p params
-	end
+	# def create
+	# 	p params
+	# end
 end

@@ -14,8 +14,8 @@ class SourcesControllerTest < ActionController::TestCase
   	assert_equal source.as_json, json["source"]
   end
 
-  test "create" do
-  	source = Source.new url: "google.ca"
-  	post :create, source: source, format: :json
-  end
+  # test "create" do
+  # 	source = Source.new url: "google.ca"
+  # 	post :create, source: source, format: :json
+  # end
 end
