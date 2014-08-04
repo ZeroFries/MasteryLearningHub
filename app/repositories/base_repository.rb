@@ -10,8 +10,8 @@ class BaseRepository
 
   def create(attributes={})
     attributes = sanitize_attributes attributes
-    model_attributes = { created_by_id: @current_user.entrypoint_user_id,
-                         updated_by_id: @current_user.entrypoint_user_id, deleted: false }
+    model_attributes = {}#{ created_by_id: @current_user.id,
+                         #updated_by_id: @current_user.id, deleted: false }
     attributes.merge! model_attributes
 
     instance_obj = klass.send :new, attributes
@@ -55,27 +55,24 @@ class BaseRepository
     return model, success
   end
 
-  def find_by_id(id, include_deleted = false)
-    models, success = find({id: id}, include_deleted)
+  def find_by_id(id)
+    models, success = find({id: id})
     return models.first, success
   end
 
 
-  def find(query, include_deleted = false)
-    query = query.merge(deleted: false) if !include_deleted
+  def find(query={})
     models = klass.send :where, query
     return models, models.any?
   end
 
   def delete(model)
-    attributes = { deleted: true }
-    attributes.merge! ordinal: nil if model.respond_to? :ordinal
-    update model, attributes
+    model.destroy
   end
 
   def update(model, attributes)
     attributes = sanitize_attributes attributes
-    model.assign_attributes attributes.merge(updated_by_id: @current_user.entrypoint_user_id)
+    model.assign_attributes attributes #.merge(updated_by_id: @current_user.id)
     success = model.save
 
     return model, success

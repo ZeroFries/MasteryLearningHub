@@ -3,11 +3,7 @@ require 'test_helper'
 class BaseRepositoryTest < ActiveSupport::TestCase
   def setup
     @user = User.create email: "email.com"
-    @repo = Documentation::BaseRepository.new Node, @user
-  end
-
-  def teardown
-    DatanodeCleaner[:mongoid].clean
+    @repo = BaseRepository.new Node, @user
   end
 
   def test_create
