@@ -6,7 +6,23 @@ class SourcesController < ApplicationController
 		render json: { source: @source }
 	end
 
-	# def create
-	# 	p params
-	# end
+	def create
+		repo = BaseRepository.new Source, current_user
+		@source, success = repo.create params[:source]
+		if success
+			render json: { source: @source }
+		else
+			raise ActiveRecord::RecordInvalid, @source
+		end
+	end
+
+	def show
+		repo = BaseRepository.new Source, current_user
+		@source, success = repo.find_by_id params[:id]
+		if success
+			render json: { source: @source }
+		else
+			raise ActiveRecord::RecordNotFound, params[:id]
+		end
+	end
 end
