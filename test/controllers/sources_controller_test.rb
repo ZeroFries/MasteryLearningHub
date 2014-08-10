@@ -51,4 +51,29 @@ class SourcesControllerTest < ActionController::TestCase
   	json = JSON.parse response.body
   	assert_equal "Not found: 999", json["message"]
   end
+
+  test "#index finds by topic" do
+  	topic = Topic.create name: "topic"
+  	3.times { topic.sources.create url: "google.ca", title: "title" }
+  	unincluded_source = Source.create title: "different topic source"
+  	get :index, topic_id: topic.id, format: :json
+
+  	sources = assigns :sources
+  	assert_equal 3, sources.size
+  	assert_equal topic.sources, sources
+  	refute sources.include? unincluded_source
+
+  	json = JSON.parse response.body
+  	assert_equal sources.map(&:as_json).map(&:values).map(&:compact).map(&:count), json["sources"].map(&:values).map(&:compact).map(&:count)
+  end
+
+  test "#index with no topic id" do
+  	topic = Topic.create name: "topic"
+  	3.times { topic.sources.create url: "google.ca", title: "title" }
+  	get :index, topic_id: nil, format: :json
+
+  	sources = assigns :sources
+  	assert_equal 0, sources.size
+  end
 end
+		

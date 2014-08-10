@@ -25,4 +25,14 @@ class SourcesController < ApplicationController
 			raise ActiveRecord::RecordNotFound, params[:id]
 		end
 	end
+
+	def index
+		repo = BaseRepository.new Source, current_user
+		@sources, success = repo.find topic_id: params[:topic_id]
+		if success
+			render json: { sources: @sources }
+		else
+			raise ActiveRecord::RecordNotFound, params[:topic_id]
+		end
+	end
 end
