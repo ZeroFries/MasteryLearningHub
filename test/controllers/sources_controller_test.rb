@@ -75,5 +75,23 @@ class SourcesControllerTest < ActionController::TestCase
   	sources = assigns :sources
   	assert_equal 0, sources.size
   end
+
+  test "#destroy" do
+  	source = Source.create! url: "google.ca", title: "title"
+  	delete :destroy, id: source.id, format: :json
+
+  	json = JSON.parse response.body
+  	refute Source.all.include? source
+  	assert_equal source.as_json.values.compact.count, json["source"].values.compact.count
+  	assert json['deleted']
+  end
+
+  test "#destroy not found" do
+  	delete :destroy, id: 999, format: :json
+
+		assert_response :not_found
+  	json = JSON.parse response.body
+  	assert_equal "Not found: 999", json["message"]
+  end
 end
 		

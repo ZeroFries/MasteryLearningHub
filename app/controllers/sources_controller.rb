@@ -35,4 +35,18 @@ class SourcesController < ApplicationController
 			raise ActiveRecord::RecordNotFound, params[:topic_id]
 		end
 	end
+
+	def search
+	end
+
+	def destroy
+		repo = BaseRepository.new Source, current_user
+		@source, success = repo.find_and_delete params[:id]
+		if success
+			render json: { source: @source, deleted: true }
+		else
+			raise ActiveRecord::RecordNotFound, params[:id]
+		end
+	end
+
 end

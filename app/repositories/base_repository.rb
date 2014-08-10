@@ -68,6 +68,7 @@ class BaseRepository
 
   def delete(model)
     model.destroy
+    return model, model.destroyed?
   end
 
   def update(model, attributes)
