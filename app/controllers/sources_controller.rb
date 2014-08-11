@@ -26,6 +26,9 @@ class SourcesController < ApplicationController
 		end
 	end
 
+	def update
+	end
+
 	def index
 		repo = BaseRepository.new Source, current_user
 		@sources, success = repo.find topic_id: params[:topic_id]

@@ -77,11 +77,13 @@ class SourcesControllerTest < ActionController::TestCase
   end
 
   test "#destroy" do
-  	source = Source.create! url: "google.ca", title: "title"
+  	topic = Topic.create name: "topic"
+  	source = topic.sources.create! url: "google.ca", title: "title"
   	delete :destroy, id: source.id, format: :json
 
   	json = JSON.parse response.body
   	refute Source.all.include? source
+  	assert topic.reload.sources.empty?
   	assert_equal source.as_json.values.compact.count, json["source"].values.compact.count
   	assert json['deleted']
   end
