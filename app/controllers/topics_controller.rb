@@ -20,14 +20,24 @@ class TopicsController < ApplicationController
 		repo = BaseRepository.new Topic, current_user
 		@topic, success = repo.find_by_id params[:id]
 		if success
-			render show_json(@topic)
+			render json: show_json(@topic)
 		else
 			raise ActiveRecord::RecordNotFound, params[:id]
 		end
 	end
 
 	def update
-		# test for sanitized params
+		repo = BaseRepository.new Topic, current_user
+		@topic, success = repo.find_and_update params[:topic]
+		if success
+			render json: show_json(@topic)
+		else
+			if @topic.nil?
+				raise ActiveRecord::RecordNotFound, params[:id]
+			else
+				raise ActiveRecord::RecordInvalid, @topic
+			end
+		end
 	end
 
 	def index
@@ -59,7 +69,9 @@ class TopicsController < ApplicationController
 
 	def show_json(topic)
 		{
-			json: { topic: @topic, parent_topic: topic.parent_topic, child_topics: topic.child_topics }
+	  	topic: @topic, 
+	  	parent_topic: topic.parent_topic, 
+	  	child_topics: topic.child_topics 
 		}
 	end
 end

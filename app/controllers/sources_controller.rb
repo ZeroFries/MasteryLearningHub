@@ -27,6 +27,17 @@ class SourcesController < ApplicationController
 	end
 
 	def update
+		repo = BaseRepository.new Source, current_user
+		@topic, success = repo.find_and_update params[:topic]
+		if success
+			render json: show_json(@topic)
+		else
+			if @topic.nil?
+				raise ActiveRecord::RecordNotFound, params[:id]
+			else
+				raise ActiveRecord::RecordInvalid, @topic
+			end
+		end
 	end
 
 	def index

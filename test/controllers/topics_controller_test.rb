@@ -52,16 +52,48 @@ class TopicsControllerTest < ActionController::TestCase
   	assert_equal "Not found: 999", json["message"]
   end
 
+  test "#update" do
+  	parent_topic = Topic.create! name: "parent name"
+  	new_parent_topic = Topic.create! name: "new parent name"
+  	topic = Topic.create! name: "name", topic_id: parent_topic.id
+  	get :show, id: topic.id, format: :json
+
+  	json = JSON.parse response.body
+  	topic_json = json["topic"]
+  	topic_json["name"] = "new name"
+  	topic_json["topic_id"] = new_parent_topic.id
+
+  	put :update, id: topic.id, topic: topic_json, format: :json
+  	assert_equal topic.reload.as_json.values.compact.count, json["topic"].values.compact.count
+  	assert_equal "new name", topic.name
+  	assert_equal new_parent_topic, topic.parent_topic
+  end
+
+  test "#update not found" do
+  	put :update, id: 999, topic: {}, format: :json
+
+		assert_response :not_found
+  	json = JSON.parse response.body
+  	assert_equal "Not found: 999", json["message"]
+  end
+
+  test "#update with invalid params" do
+  	topic = Topic.create name: "name"
+  	put :update, id: topic.id, topic: topic.as_json.merge("invalid" => "param"), format: :json
+  
+  	assert_response :internal_server_error
+  	json = JSON.parse response.body
+
+  	assert_equal "Server error: unknown attribute: invalid", json["message"]
+  end
+
   test "#destroy" do
   	topic = Topic.create name: "topic"
-  	topic = topic.topics.create! name: "name"
   	delete :destroy, id: topic.id, format: :json
 
   	json = JSON.parse response.body
   	refute Topic.all.include? topic
-  	assert topic.reload.topics.empty?
-  	assert_equal topic.as_json.values.compact.count, json["topic"].values.compact.count
-  	assert json['deleted']
+  	assert json["deleted"]
   end
 
   test "#destroy not found" do
